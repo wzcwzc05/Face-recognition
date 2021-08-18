@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from tqdm import tqdm
+
 print("Initing...")
 pbar = tqdm(total=100)
 import face_recognition
@@ -23,6 +24,7 @@ pbar.update(10)
 T1=time.time()
 pbar.update(10)
 pbar.close()
+
 print("LOADING config....",end="") 
 cf = configparser.ConfigParser()
 cf.read(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\config.ini")
@@ -67,12 +69,10 @@ def load_known_picture(fileloca):
         os.remove(dirpath)  
 
 def load_unknown_picture_pro(known_work):
-#    print("     ",known_work)
     image = face_recognition.load_image_file(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\unknown-picture\\"+known_work)
     face_locations = face_recognition.face_locations(image)
     drawObj = Image.fromarray(image)
     d = ImageDraw.Draw(drawObj, 'RGBA')
-#    print("          I found {} face(s) in this photograph...".format(len(face_locations)),end="")
     file_path = os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\data"
     known_list1=os.listdir(file_path)
     for face_locations in face_locations:
@@ -103,13 +103,14 @@ def load_unknown_picture_pro(known_work):
         fillcolor = "#"+FontColour
         d.text((pos[3],pos[0]),maxn, font=myfont, fill=fillcolor)
     drawObj.save(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\output\\"+known_work,'jpeg')
-#main body
+
 print("LOADING new known pictures....",end="")
 file_path = os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\known-picture"
 known_list=os.listdir(file_path)
 for i in range(len(known_list)):
     load_known_picture(known_list[i])
 print("[Complete]")
+
 print("LOADING unknown picture and find faces...")
 file_path = os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\unknown-picture"
 known_list=os.listdir(file_path)
@@ -117,5 +118,6 @@ for i in tqdm(range(len(known_list))):
     load_unknown_picture_pro(known_list[i])
 T2=time.time()
 print("[Complete]")
+
 print("Complete in ",T2-T1," Sec")
 print("The final result is in the output floder")
