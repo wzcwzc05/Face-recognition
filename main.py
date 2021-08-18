@@ -24,10 +24,11 @@ pbar.update(10)
 T1=time.time()
 pbar.update(10)
 pbar.close()
+RunningPath = os.path.split( os.path.realpath( sys.argv[0] ) )[0]
 
 print("LOADING config....",end="") 
 cf = configparser.ConfigParser()
-cf.read(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\config.ini")
+cf.read(RunningPath+"\\config.ini")
 RemoveThePicture=cf.get("Setting", "RemoveThePicture")
 RectangleColour=cf.get("Setting", "RectangleColour")
 FontLocation=cf.get("Setting", "FontLocation")
@@ -58,22 +59,22 @@ def StrToInt(self, s):
 
 
 def load_known_picture(fileloca):
-        known_picture=face_recognition.load_image_file(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\known-picture\\"+fileloca)
+        known_picture=face_recognition.load_image_file(RunningPath+"\\known-picture\\"+fileloca)
         known_encoding=face_recognition.face_encodings(known_picture)[0]
         x=fileloca.split('.',1)
         name=x[0]
-        fl = open(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\data\\"+name+".dat",'wb')
+        fl = open(RunningPath+"\\data\\"+name+".dat",'wb')
         pickle.dump(known_encoding,fl)
         fl.close()
-        dirpath=os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\known-picture\\"+fileloca
+        dirpath=RunningPath+"\\known-picture\\"+fileloca
         os.remove(dirpath)  
 
-def load_unknown_picture_pro(known_work):
-    image = face_recognition.load_image_file(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\unknown-picture\\"+known_work)
+def load_unknown_picture(known_work):
+    image = face_recognition.load_image_file(RunningPath+"\\unknown-picture\\"+known_work)
     face_locations = face_recognition.face_locations(image)
     drawObj = Image.fromarray(image)
     d = ImageDraw.Draw(drawObj, 'RGBA')
-    file_path = os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\data"
+    file_path = RunningPath+"\\data"
     known_list1=os.listdir(file_path)
     for face_locations in face_locations:
         top, right, bottom, left = face_locations
@@ -86,7 +87,7 @@ def load_unknown_picture_pro(known_work):
         max=100
         maxn=-1
         for j in range(len(known_list1)):
-            fl=open(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\data\\"+known_list1[j],"rb")
+            fl=open(RunningPath+"\\data\\"+known_list1[j],"rb")
             known_encoding=pickle.load(fl)
             fl.close()
             face_similar=face_recognition.api.face_distance([known_encoding], unknown_encoding)
@@ -102,20 +103,20 @@ def load_unknown_picture_pro(known_work):
         myfont = ImageFont.truetype(FontLocation, size=Fontsize1)
         fillcolor = "#"+FontColour
         d.text((pos[3],pos[0]),maxn, font=myfont, fill=fillcolor)
-    drawObj.save(os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\output\\"+known_work,'jpeg')
+    drawObj.save(RunningPath+"\\output\\"+known_work,'jpeg')
 
 print("LOADING new known pictures....",end="")
-file_path = os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\known-picture"
+file_path = RunningPath+"\\known-picture"
 known_list=os.listdir(file_path)
 for i in range(len(known_list)):
     load_known_picture(known_list[i])
 print("[Complete]")
 
 print("LOADING unknown picture and find faces...")
-file_path = os.path.split( os.path.realpath( sys.argv[0] ) )[0]+"\\unknown-picture"
+file_path = RunningPath+"\\unknown-picture"
 known_list=os.listdir(file_path)
 for i in tqdm(range(len(known_list))):
-    load_unknown_picture_pro(known_list[i])
+    load_unknown_picture(known_list[i])
 T2=time.time()
 print("[Complete]")
 
