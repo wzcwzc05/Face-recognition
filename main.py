@@ -53,7 +53,7 @@ def StrToInt(self, s):
             if s[i] not in "0123456789": 
                 return 0
             else:
-                num += (ord(s[i]) - 48)*(10**wei)
+                num += (ord(s[i]) - 48) * (10 ** wei)
                 wei += 1   
         return num * flag   
 
@@ -94,7 +94,7 @@ def load_unknown_picture(known_work):
             if face_similar<max:
                 max=face_similar
                 maxn=known_list1[j]
-        if max>0.75:
+        if max>Max_Similarity:
             maxn="unknown"
         x=maxn.split('.',1)
         maxn=x[0]
